@@ -6,544 +6,151 @@
 <title>Nexus AI — Email Intelligence</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-
-:root {
-  --bg: #F8F9FC;
-  --surface: #FFFFFF;
-  --card: #FFFFFF;
-  --border: #E2E8F0;
-  --border2: #CBD5E1;
-  --accent: #1a1a2e;
-  --accent2: #4F46E5;
-  --green: #10B981;
-  --red: #EF4444;
-  --orange: #F59E0B;
-  --blue: #3B82F6;
-  --purple: #8B5CF6;
-  --text: #0F172A;
-  --sub: #64748B;
-  --muted: #94A3B8;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--border:#E2E8F0;--border2:#CBD5E1;
+  --accent:#1a1a2e;--indigo:#4F46E5;--green:#10B981;--red:#EF4444;
+  --orange:#F59E0B;--blue:#3B82F6;--purple:#8B5CF6;
+  --text:#0F172A;--sub:#64748B;--muted:#94A3B8;
+  --sh:0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04);
+  --sh-md:0 4px 20px rgba(0,0,0,0.08);
 }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Syne', sans-serif;
-  min-height: 100vh;
-}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
 
 /* HEADER */
-header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 40px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: var(--shadow);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo-mark {
-  width: 34px; height: 34px;
-  background: var(--accent);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  color: white;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: -1px;
-}
-
-.logo-name {
-  font-size: 17px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--text);
-}
-
-.logo-name span { color: var(--accent2); }
-
-.header-right { display: flex; align-items: center; gap: 12px; }
-
-.pill {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-.pill-live {
-  background: #ECFDF5;
-  color: var(--green);
-  border: 1px solid #A7F3D0;
-}
-
-.pill-model {
-  background: #EEF2FF;
-  color: var(--accent2);
-  border: 1px solid #C7D2FE;
-}
-
-.live-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  animation: blink 2s infinite;
-}
-
-@keyframes blink {
-  0%,100% { opacity:1; }
-  50% { opacity:0.3; }
-}
+header{background:#fff;border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 36px;position:sticky;top:0;z-index:100;box-shadow:var(--sh);}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:32px;height:32px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800;letter-spacing:-1px;}
+.logo-name{font-size:16px;font-weight:800;letter-spacing:-0.5px;}
+.logo-name span{color:var(--indigo);}
+.pills{display:flex;gap:8px;align-items:center;}
+.pill{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:600;letter-spacing:0.5px;}
+.p-live{background:#ECFDF5;color:var(--green);border:1px solid #A7F3D0;}
+.p-model{background:#EEF2FF;color:var(--indigo);border:1px solid #C7D2FE;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
 
 /* LAYOUT */
-.layout {
-  display: grid;
-  grid-template-columns: 420px 1fr;
-  height: calc(100vh - 64px);
-}
+.layout{display:grid;grid-template-columns:400px 1fr;height:calc(100vh - 60px);}
 
-/* LEFT PANEL */
-.left {
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-.left-header {
-  padding: 28px 32px 20px;
-  border-bottom: 1px solid var(--border);
-}
-
-.panel-label {
-  font-size: 10px;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--muted);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.panel-title {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.8px;
-  color: var(--text);
-  line-height: 1.2;
-}
-
-.panel-title span { color: var(--accent2); }
-
-.left-body { padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; }
+/* LEFT */
+.left{background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
+.lh{padding:24px 28px 18px;border-bottom:1px solid var(--border);}
+.panel-eyebrow{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:3px;margin-bottom:5px;}
+.panel-title{font-size:20px;font-weight:800;letter-spacing:-0.8px;line-height:1.2;}
+.panel-title span{color:var(--indigo);}
+.lb{padding:20px 28px;display:flex;flex-direction:column;gap:16px;}
 
 /* Scenarios */
-.scenario-label {
-  font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--sub);
-  letter-spacing: 1px;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-.scenarios {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.sc-btn {
-  padding: 10px 8px;
-  border-radius: 10px;
-  border: 1.5px solid var(--border);
-  background: var(--bg);
-  cursor: pointer;
-  font-family: 'Syne', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--sub);
-  transition: all 0.15s;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.sc-btn:hover {
-  border-color: var(--accent2);
-  color: var(--accent2);
-  background: #EEF2FF;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(79,70,229,0.1);
-}
-
-.sc-btn .sc-emoji { font-size: 18px; }
-.sc-btn .sc-name { font-size: 10px; letter-spacing: 1px; }
+.sc-label{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:2px;font-weight:600;margin-bottom:8px;}
+.scenarios{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.sc{padding:10px 6px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--sub);transition:all 0.15s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.sc:hover{border-color:var(--indigo);color:var(--indigo);background:#EEF2FF;transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,70,229,0.1);}
+.sc .e{font-size:18px;}.sc .n{font-size:9px;letter-spacing:1.5px;}
 
 /* Fields */
-.field { display: flex; flex-direction: column; gap: 6px; }
+.field{display:flex;flex-direction:column;gap:5px;}
+.fl{font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--sub);letter-spacing:1px;}
+.field input,.field textarea{background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);outline:none;transition:all 0.15s;width:100%;}
+.field input:focus,.field textarea:focus{border-color:var(--indigo);background:#fff;box-shadow:0 0 0 3px rgba(79,70,229,0.07);}
+.field textarea{resize:none;min-height:100px;line-height:1.7;}
 
-.field-label {
-  font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 600;
-  color: var(--sub);
-  letter-spacing: 0.5px;
-}
+/* Run btn */
+.run{background:var(--accent);color:#fff;border:none;border-radius:11px;padding:14px;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:9px;letter-spacing:-0.3px;box-shadow:0 4px 14px rgba(26,26,46,0.25);width:100%;}
+.run:hover{background:#2d2d4e;transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,26,46,0.3);}
+.run:active{transform:translateY(0);}
+.run:disabled{opacity:0.45;cursor:not-allowed;transform:none;}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;display:none;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.loading .spin{display:block;}.loading .rl{display:none;}
 
-.field input, .field textarea {
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  padding: 11px 14px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12.5px;
-  color: var(--text);
-  outline: none;
-  transition: all 0.15s;
-  width: 100%;
-}
-
-.field input:focus, .field textarea:focus {
-  border-color: var(--accent2);
-  background: white;
-  box-shadow: 0 0 0 3px rgba(79,70,229,0.08);
-}
-
-.field textarea {
-  resize: none;
-  min-height: 110px;
-  line-height: 1.7;
-}
-
-/* Run button */
-.run-btn {
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  padding: 15px 24px;
-  font-family: 'Syne', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  letter-spacing: -0.3px;
-  box-shadow: 0 4px 14px rgba(26,26,46,0.3);
-  width: 100%;
-}
-
-.run-btn:hover {
-  background: #2d2d4e;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(26,26,46,0.35);
-}
-
-.run-btn:active { transform: translateY(0); }
-.run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-.spinner {
-  width: 16px; height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  display: none;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading .spinner { display: block; }
-.loading .btn-label { display: none; }
-
-/* RIGHT PANEL */
-.right {
-  background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  padding: 32px 40px;
-  gap: 24px;
-}
+/* RIGHT */
+.right{background:var(--bg);overflow-y:auto;padding:28px 36px;display:flex;flex-direction:column;gap:20px;}
 
 /* Stats */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.stat{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:var(--sh);}
+.sv{font-size:26px;font-weight:800;letter-spacing:-1.5px;line-height:1;margin-bottom:3px;}
+.sk{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:1.5px;}
 
-.stat {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px 20px;
-  box-shadow: var(--shadow);
-}
+/* CORS / Error */
+.cors-box{background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:14px 18px;display:none;gap:10px;align-items:flex-start;}
+.cors-box.show{display:flex;}
+.cors-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+.cors-text{font-size:11px;font-family:'JetBrains Mono',monospace;color:#92400E;line-height:1.8;}
+.cors-text strong{color:#78350F;display:block;margin-bottom:4px;}
 
-.stat-val {
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -1.5px;
-  line-height: 1;
-  margin-bottom: 4px;
-}
+.err-box{background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:14px 18px;display:none;}
+.err-box.show{display:block;}
+.err-t{font-size:12px;font-weight:700;color:var(--red);margin-bottom:5px;}
+.err-m{font-size:11px;font-family:'JetBrains Mono',monospace;color:#991B1B;line-height:1.7;}
 
-.stat-key {
-  font-size: 10px;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--muted);
-  letter-spacing: 1.5px;
-  font-weight: 500;
-}
+/* Result card */
+.result{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--sh-md);display:none;animation:up .3s ease;}
+@keyframes up{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.result.show{display:block;}
 
-/* Result area */
-.result-area {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-  display: none;
-  animation: fadeUp 0.3s ease;
-}
+.result-head{padding:16px 22px;border-bottom:1px solid var(--border);background:#FAFBFF;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.cat-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;border-radius:24px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:1px;}
+.meta-chips{display:flex;gap:8px;align-items:center;}
+.meta-chip{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 9px;}
 
-@keyframes fadeUp {
-  from { opacity:0; transform: translateY(10px); }
-  to { opacity:1; transform: translateY(0); }
-}
+.result-body{padding:22px;}
+.sec-label{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:2px;font-weight:600;text-transform:uppercase;margin-bottom:10px;}
 
-.result-area.show { display: block; }
+/* The reply display — handles both plain text and HTML */
+.reply-frame{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:20px;max-height:340px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9;color:var(--text);}
+.reply-frame p{margin-bottom:12px;}
+.reply-frame p:last-child{margin-bottom:0;}
+.reply-frame strong{font-weight:700;color:var(--accent);}
 
-.result-top {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #FAFBFF;
-}
-
-.cat-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 24px;
-  font-size: 12px;
-  font-weight: 700;
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 1px;
-}
-
-.time-chip {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 4px 10px;
-}
-
-.result-body { padding: 24px; }
-
-.section-label {
-  font-size: 10px;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--muted);
-  letter-spacing: 2px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-.reply-content {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  color: var(--text);
-  line-height: 1.9;
-  max-height: 300px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.action-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.action-btn {
-  padding: 8px 18px;
-  border-radius: 8px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1.5px solid var(--border);
-  background: white;
-  color: var(--sub);
-  transition: all 0.15s;
-}
-
-.action-btn:hover { border-color: var(--accent2); color: var(--accent2); }
-.action-btn.primary { background: var(--accent2); color: white; border-color: var(--accent2); }
-.action-btn.primary:hover { background: #4338CA; border-color: #4338CA; }
-
-/* Error */
-.error-box {
-  background: #FEF2F2;
-  border: 1px solid #FECACA;
-  border-radius: 12px;
-  padding: 16px 20px;
-  display: none;
-  animation: fadeUp 0.2s ease;
-}
-
-.error-box.show { display: block; }
-.error-title { font-size: 13px; font-weight: 700; color: var(--red); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-.error-body { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: #991B1B; line-height: 1.6; }
-
-/* CORS note */
-.cors-note {
-  background: #FFFBEB;
-  border: 1px solid #FDE68A;
-  border-radius: 12px;
-  padding: 14px 18px;
-  display: none;
-}
-
-.cors-note.show { display: flex; gap: 10px; align-items: flex-start; }
-.cors-note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-.cors-note-text { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #92400E; line-height: 1.7; }
-.cors-note-text strong { color: #78350F; }
+.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.abtn{padding:8px 16px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;cursor:pointer;transition:all 0.15s;letter-spacing:0.5px;}
+.abtn-primary{background:var(--indigo);color:#fff;border:none;}
+.abtn-primary:hover{background:#4338CA;}
+.abtn-outline{background:#fff;color:var(--sub);border:1.5px solid var(--border);}
+.abtn-outline:hover{border-color:var(--indigo);color:var(--indigo);}
 
 /* History */
-.history-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  display: none;
-}
-
-.history-section.show { display: block; }
-
-.history-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.history-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.history-count {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 2px 8px;
-  font-size: 10px;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--muted);
-}
-
-.history-row {
-  padding: 12px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: background 0.1s;
-}
-
-.history-row:last-child { border-bottom: none; }
-.history-row:hover { background: var(--bg); }
-
-.h-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.h-from { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted); min-width: 130px; }
-.h-subject { flex: 1; font-size: 12px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.h-cat { font-size: 10px; font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 3px 10px; border-radius: 10px; white-space: nowrap; }
-.h-time { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--muted); }
+.hist{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--sh);display:none;}
+.hist.show{display:block;}
+.hist-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.hist-title{font-size:12px;font-weight:700;color:var(--text);}
+.hist-count{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:2px 9px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);}
+.hist-row{padding:11px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;cursor:pointer;transition:background 0.1s;}
+.hist-row:last-child{border-bottom:none;}
+.hist-row:hover{background:var(--bg);}
+.hd{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.hfrom{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);min-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hsubj{flex:1;font-size:11px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hcat{font-size:9px;font-family:'JetBrains Mono',monospace;font-weight:700;padding:3px 9px;border-radius:10px;white-space:nowrap;}
+.htime{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);}
 
 /* Empty */
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 80px 20px;
-  text-align: center;
-}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:70px 20px;text-align:center;}
+.empty-ic{font-size:44px;opacity:0.12;}
+.empty-h{font-size:15px;font-weight:700;color:var(--text);opacity:0.35;}
+.empty-p{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);line-height:1.8;}
 
-.empty-icon { font-size: 48px; opacity: 0.15; }
-.empty-h { font-size: 16px; font-weight: 700; color: var(--text); opacity: 0.4; }
-.empty-p { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--muted); line-height: 1.7; }
+/* Cat styles */
+.c-setup{background:#EFF6FF;color:#1D4ED8;border:1.5px solid #BFDBFE;}
+.c-pricing{background:#F0FDF4;color:#15803D;border:1.5px solid #BBF7D0;}
+.c-security{background:#FEF2F2;color:#DC2626;border:1.5px solid #FECACA;}
+.c-support{background:#F5F3FF;color:#7C3AED;border:1.5px solid #DDD6FE;}
+.c-escalate{background:#FFF7ED;color:#C2410C;border:1.5px solid #FED7AA;}
+.c-offtopic{background:#F8FAFC;color:#64748B;border:1.5px solid #E2E8F0;}
+.d-setup{background:#3B82F6;}.d-pricing{background:#10B981;}.d-security{background:#EF4444;}
+.d-support{background:#8B5CF6;}.d-escalate{background:#F59E0B;}.d-offtopic{background:#94A3B8;}
 
-/* Category styles */
-.setup    { background:#EFF6FF; color:#1D4ED8; border:1.5px solid #BFDBFE; }
-.pricing  { background:#F0FDF4; color:#15803D; border:1.5px solid #BBF7D0; }
-.security { background:#FEF2F2; color:#DC2626; border:1.5px solid #FECACA; }
-.support  { background:#F5F3FF; color:#7C3AED; border:1.5px solid #DDD6FE; }
-.escalate { background:#FFF7ED; color:#C2410C; border:1.5px solid #FED7AA; }
-.off-topic{ background:#F8FAFC; color:#64748B; border:1.5px solid #E2E8F0; }
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+::-webkit-scrollbar-track{background:transparent;}
 
-.dot-setup    { background:#3B82F6; }
-.dot-pricing  { background:#10B981; }
-.dot-security { background:#EF4444; }
-.dot-support  { background:#8B5CF6; }
-.dot-escalate { background:#F59E0B; }
-.dot-offtopic { background:#94A3B8; }
-
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
-@media (max-width: 900px) {
-  .layout { grid-template-columns: 1fr; height: auto; }
-  .left { border-right: none; border-bottom: 1px solid var(--border); }
-  .stats { grid-template-columns: repeat(2,1fr); }
-  .right { padding: 20px; }
-  header { padding: 0 20px; }
+@media(max-width:860px){
+  .layout{grid-template-columns:1fr;height:auto;}
+  .left{border-right:none;border-bottom:1px solid var(--border);}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .right{padding:20px;}
 }
 </style>
 </head>
@@ -554,12 +161,9 @@ header {
     <div class="logo-mark">Nx</div>
     <div class="logo-name">Nexus <span>AI</span></div>
   </div>
-  <div class="header-right">
-    <div class="pill pill-model">⚡ Mistral + n8n</div>
-    <div class="pill pill-live">
-      <div class="live-dot"></div>
-      AGENT LIVE
-    </div>
+  <div class="pills">
+    <div class="pill p-model">⚡ Mistral + n8n</div>
+    <div class="pill p-live"><div class="live-dot"></div>AGENT LIVE</div>
   </div>
 </header>
 
@@ -567,307 +171,274 @@ header {
 
   <!-- LEFT -->
   <div class="left">
-    <div class="left-header">
-      <div class="panel-label">Email Intelligence</div>
+    <div class="lh">
+      <div class="panel-eyebrow">Email Intelligence Platform</div>
       <div class="panel-title">Classify &amp; <span>Draft Reply</span></div>
     </div>
-    <div class="left-body">
+    <div class="lb">
 
-      <!-- Quick scenarios -->
       <div>
-        <div class="scenario-label">QUICK TEST SCENARIOS</div>
+        <div class="sc-label">QUICK TEST SCENARIOS</div>
         <div class="scenarios">
-          <button class="sc-btn" onclick="fill('setup')"><span class="sc-emoji">⚙️</span><span class="sc-name">SETUP</span></button>
-          <button class="sc-btn" onclick="fill('pricing')"><span class="sc-emoji">💰</span><span class="sc-name">PRICING</span></button>
-          <button class="sc-btn" onclick="fill('security')"><span class="sc-emoji">🔒</span><span class="sc-name">SECURITY</span></button>
-          <button class="sc-btn" onclick="fill('support')"><span class="sc-emoji">🛠</span><span class="sc-name">SUPPORT</span></button>
-          <button class="sc-btn" onclick="fill('offtopic')"><span class="sc-emoji">🚫</span><span class="sc-name">OFF-TOPIC</span></button>
-          <button class="sc-btn" onclick="fill('escalate')"><span class="sc-emoji">📞</span><span class="sc-name">ESCALATE</span></button>
+          <button class="sc" onclick="fill('setup')"><span class="e">⚙️</span><span class="n">SETUP</span></button>
+          <button class="sc" onclick="fill('pricing')"><span class="e">💰</span><span class="n">PRICING</span></button>
+          <button class="sc" onclick="fill('security')"><span class="e">🔒</span><span class="n">SECURITY</span></button>
+          <button class="sc" onclick="fill('support')"><span class="e">🛠</span><span class="n">SUPPORT</span></button>
+          <button class="sc" onclick="fill('offtopic')"><span class="e">🚫</span><span class="n">OFF-TOPIC</span></button>
+          <button class="sc" onclick="fill('escalate')"><span class="e">📞</span><span class="n">ESCALATE</span></button>
         </div>
       </div>
 
       <div class="field">
-        <div class="field-label">FROM</div>
+        <div class="fl">FROM</div>
         <input id="from" type="email" placeholder="sarah@company.com">
       </div>
-
       <div class="field">
-        <div class="field-label">SUBJECT</div>
-        <input id="subject" type="text" placeholder="Help connecting Salesforce">
+        <div class="fl">SUBJECT</div>
+        <input id="subject" placeholder="Help connecting Salesforce">
       </div>
-
       <div class="field">
-        <div class="field-label">EMAIL BODY</div>
+        <div class="fl">EMAIL BODY</div>
         <textarea id="body" placeholder="Type or select a scenario above..."></textarea>
       </div>
 
-      <button class="run-btn" id="runBtn" onclick="runAgent()">
-        <span class="btn-label">⚡ Run AI Agent</span>
-        <div class="spinner"></div>
+      <button class="run" id="runBtn" onclick="go()">
+        <span class="rl">⚡ Run AI Agent</span>
+        <div class="spin"></div>
       </button>
-
     </div>
   </div>
 
   <!-- RIGHT -->
   <div class="right">
 
-    <!-- Stats -->
     <div class="stats">
-      <div class="stat">
-        <div class="stat-val" id="sTotal" style="color:var(--text)">0</div>
-        <div class="stat-key">TOTAL RUNS</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val" id="sSuccess" style="color:var(--green)">0</div>
-        <div class="stat-key">SUCCESSFUL</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val" id="sErrors" style="color:var(--red)">0</div>
-        <div class="stat-key">ERRORS</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val" id="sAvg" style="color:var(--accent2)">—</div>
-        <div class="stat-key">AVG SPEED</div>
+      <div class="stat"><div class="sv" id="sT" style="color:var(--text)">0</div><div class="sk">TOTAL RUNS</div></div>
+      <div class="stat"><div class="sv" id="sS" style="color:var(--green)">0</div><div class="sk">SUCCESSFUL</div></div>
+      <div class="stat"><div class="sv" id="sE" style="color:var(--red)">0</div><div class="sk">ERRORS</div></div>
+      <div class="stat"><div class="sv" id="sA" style="color:var(--indigo)">—</div><div class="sk">AVG SPEED</div></div>
+    </div>
+
+    <div class="cors-box" id="corsBox">
+      <div class="cors-icon">⚠️</div>
+      <div class="cors-text">
+        <strong>CORS blocked — browser security is preventing the request.</strong>
+        Fix in n8n: Click Webhook node → Settings → set <code>Allowed Origins</code> to <code>*</code><br>
+        Also in Respond to Webhook → Options → Add Response Header: <code>Access-Control-Allow-Origin: *</code><br>
+        Then re-save and make sure workflow is <strong>Active</strong> (toggle top-right in n8n).
       </div>
     </div>
 
-    <!-- CORS note (shown when needed) -->
-    <div class="cors-note" id="corsNote">
-      <div class="cors-note-icon">⚠️</div>
-      <div class="cors-note-text">
-        <strong>CORS blocked by browser.</strong> This happens when calling n8n from a local HTML file.<br>
-        <strong>Fix:</strong> In n8n → Webhook node → Settings → enable <strong>"Allow Cross-Origin Requests"</strong> (or add <code>Access-Control-Allow-Origin: *</code> in Respond to Webhook headers). Then re-activate your workflow.
-      </div>
+    <div class="err-box" id="errBox">
+      <div class="err-t">⚠ Error</div>
+      <div class="err-m" id="errMsg"></div>
     </div>
 
-    <!-- Error box -->
-    <div class="error-box" id="errorBox">
-      <div class="error-title">⚠ Error</div>
-      <div class="error-body" id="errorMsg"></div>
-    </div>
-
-    <!-- Result -->
-    <div class="result-area" id="resultArea">
-      <div class="result-top">
-        <div class="cat-chip" id="catChip"></div>
-        <div class="time-chip" id="timeChip"></div>
+    <div class="result" id="resultCard">
+      <div class="result-head">
+        <div class="cat-badge" id="catBadge"></div>
+        <div class="meta-chips">
+          <div class="meta-chip" id="timeChip"></div>
+          <div class="meta-chip" id="fromChip"></div>
+        </div>
       </div>
       <div class="result-body">
-        <div class="section-label">DRAFTED REPLY</div>
-        <div class="reply-content" id="replyContent"></div>
-        <div class="action-row">
-          <button class="action-btn primary" onclick="copyReply()">⎘ Copy Reply</button>
-          <button class="action-btn" onclick="clearResult()">✕ Clear</button>
+        <div class="sec-label">Drafted Reply</div>
+        <div class="reply-frame" id="replyFrame"></div>
+        <div class="actions">
+          <button class="abtn abtn-primary" onclick="copyReply()">⎘ Copy Reply</button>
+          <button class="abtn abtn-outline" onclick="clearAll()">✕ Clear</button>
         </div>
       </div>
     </div>
 
-    <!-- History -->
-    <div class="history-section" id="historySection">
-      <div class="history-header">
-        <div class="history-title">📋 Run History</div>
-        <div class="history-count" id="histCount">0 runs</div>
+    <div class="hist" id="histSection">
+      <div class="hist-head">
+        <div class="hist-title">📋 Run History</div>
+        <div class="hist-count" id="histCount">0 runs</div>
       </div>
-      <div id="historyList"></div>
+      <div id="histList"></div>
     </div>
 
-    <!-- Empty -->
     <div class="empty" id="emptyState">
-      <div class="empty-icon">📬</div>
+      <div class="empty-ic">📬</div>
       <div class="empty-h">Ready to classify</div>
-      <div class="empty-p">Click a scenario above or type your own email.<br>Hit Run to see the AI agent in action.</div>
+      <div class="empty-p">Pick a scenario or write your own email.<br>Hit Run Agent to see the AI in action.</div>
     </div>
 
   </div>
 </div>
 
 <script>
-const WEBHOOK = 'https://swans-ai-hackathon.app.n8n.cloud/webhook/nexus-email-agent';
+const WH = 'https://swans-ai-hackathon.app.n8n.cloud/webhook/nexus-email-agent';
 
-const SCENARIOS = {
-  setup: {
-    from: 'sarah.mitchell@brighthorizonltd.com',
-    subject: 'Help connecting Salesforce',
-    body: "Hi there, I just signed up for Nexus and I'm trying to connect our Salesforce account. I've gone through the settings menu but keep getting an authentication error. Could you walk me through the correct setup process step by step?"
-  },
-  pricing: {
-    from: 'david.chen@techcorp.io',
-    subject: 'Enterprise pricing for 200 users',
-    body: "We're evaluating Nexus for our company of around 200 users. We need SSO support and a custom SLA agreement. Could you share your enterprise pricing options and what's included at that tier?"
-  },
-  security: {
-    from: 'maria.santos@financefirm.com',
-    subject: 'GDPR compliance and data storage',
-    body: "We're an EU-based financial services firm and need to confirm your GDPR compliance before proceeding. Where is customer data stored? Are you SOC 2 Type II certified? We'll also need a Data Processing Agreement."
-  },
-  support: {
-    from: 'james.park@startup.co',
-    subject: 'API returning 401 on every call',
-    body: "Hi, I'm getting a 401 Unauthorized error on every single API call. I've double checked my API key multiple times and it looks correct. This started happening yesterday and is blocking our integration completely."
-  },
-  offtopic: {
-    from: 'random@gmail.com',
-    subject: "What's the weather in London?",
-    body: "Hey, could you tell me the weather forecast for London this weekend? Also any restaurant recommendations near Shoreditch would be great!"
-  },
-  escalate: {
-    from: 'cto@bigenterprise.com',
-    subject: 'Complex multi-system integration + compliance',
-    body: "We need to integrate Nexus simultaneously with Salesforce, HubSpot, and our custom internal ERP. We also have GDPR, SOC2, and ISO27001 requirements, need a custom SLA, a dedicated support engineer, and a full security audit before we can sign any contracts."
-  }
+const SC = {
+  setup:{from:'sarah.mitchell@brighthorizonltd.com',subject:'Help connecting Salesforce',body:"Hi, I just signed up for Nexus and I'm trying to connect our Salesforce account. I've gone through the settings menu but keep getting an authentication error. Could you walk me through the correct setup process?"},
+  pricing:{from:'david.chen@techcorp.io',subject:'Enterprise pricing for 200 users',body:"We're evaluating Nexus for our company of ~200 users. We need SSO support and a custom SLA. Could you share enterprise pricing and what's included?"},
+  security:{from:'maria.santos@financefirm.com',subject:'GDPR compliance and data storage',body:"We're an EU-based financial firm. Need to confirm GDPR compliance before proceeding. Where is data stored? SOC 2 certified? We'll also need a Data Processing Agreement."},
+  support:{from:'james.park@startup.co',subject:'API returning 401 on every call',body:"Hi, getting 401 Unauthorized on every API call. I've double-checked my key multiple times. This started yesterday and is blocking our integration completely. Urgent."},
+  offtopic:{from:'random@gmail.com',subject:"What's the weather in London?",body:"Hey, could you tell me the weather forecast for London this weekend? Any restaurant recommendations near Shoreditch would be great too!"},
+  escalate:{from:'cto@bigenterprise.com',subject:'Complex integration + compliance',body:"We need to integrate Nexus with Salesforce, HubSpot, and a custom internal ERP simultaneously. We also have GDPR, SOC2, ISO27001 requirements, need custom SLA, dedicated engineer, and a full security audit before signing."}
 };
 
-const CAT = {
-  setup:      { emoji:'⚙️', label:'SETUP',      cls:'setup',     dot:'dot-setup' },
-  pricing:    { emoji:'💰', label:'PRICING',    cls:'pricing',   dot:'dot-pricing' },
-  security:   { emoji:'🔒', label:'SECURITY',   cls:'security',  dot:'dot-security' },
-  support:    { emoji:'🛠', label:'SUPPORT',    cls:'support',   dot:'dot-support' },
-  escalate:   { emoji:'📞', label:'ESCALATE',   cls:'escalate',  dot:'dot-escalate' },
-  'off-topic':{ emoji:'🚫', label:'OFF-TOPIC',  cls:'off-topic', dot:'dot-offtopic' }
+const CATS = {
+  'setup':      {e:'⚙️',l:'SETUP',    bc:'c-setup',   dc:'d-setup'},
+  'pricing':    {e:'💰',l:'PRICING',  bc:'c-pricing', dc:'d-pricing'},
+  'security':   {e:'🔒',l:'SECURITY', bc:'c-security',dc:'d-security'},
+  'support':    {e:'🛠',l:'SUPPORT',  bc:'c-support', dc:'d-support'},
+  'escalate':   {e:'📞',l:'ESCALATE', bc:'c-escalate',dc:'d-escalate'},
+  'off-topic':  {e:'🚫',l:'OFF-TOPIC',bc:'c-offtopic',dc:'d-offtopic'}
 };
 
-let runs = [], total=0, success=0, errors=0, totalMs=0;
+let runs=[],tot=0,suc=0,err=0,ms=0;
 
-function fill(type) {
-  const s = SCENARIOS[type];
-  document.getElementById('from').value = s.from;
-  document.getElementById('subject').value = s.subject;
-  document.getElementById('body').value = s.body;
-  // Highlight the selected button
-  document.querySelectorAll('.sc-btn').forEach(b => b.style.borderColor = '');
+function fill(t){
+  const s=SC[t];
+  set('from',s.from); set('subject',s.subject); set('body',s.body);
 }
 
-async function runAgent() {
-  const from = document.getElementById('from').value.trim();
-  const subject = document.getElementById('subject').value.trim();
-  const body = document.getElementById('body').value.trim();
+function set(id,v){document.getElementById(id).value=v;}
+function get(id){return document.getElementById(id).value.trim();}
+function el(id){return document.getElementById(id);}
 
-  if (!from || !subject || !body) {
-    showError('Please fill in all fields or click a scenario above.');
-    return;
-  }
+// Safely parse JSON even if wrapped in backticks
+function safeJson(raw){
+  if(typeof raw === 'object') return raw;
+  const cleaned = String(raw).replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+  return JSON.parse(cleaned);
+}
 
-  const btn = document.getElementById('runBtn');
-  btn.disabled = true;
-  btn.classList.add('loading');
-  hide('errorBox'); hide('resultArea'); hide('emptyState'); hide('corsNote');
+async function go(){
+  const from=get('from'), subject=get('subject'), body=get('body');
+  if(!from||!subject||!body){showErr('Please fill all fields or select a scenario.');return;}
 
-  const t0 = Date.now();
-  total++;
+  const btn=el('runBtn');
+  btn.disabled=true; btn.classList.add('loading');
+  hide('errBox'); hide('resultCard'); hide('corsBox'); hide('emptyState');
+
+  const t0=Date.now(); tot++;
   updateStats();
 
-  try {
-    const res = await fetch(WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from, subject, body })
+  try{
+    const res = await fetch(WH,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({from,subject,body})
     });
 
-    const ms = Date.now() - t0;
+    const elapsed=Date.now()-t0;
 
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status} — Workflow may not be active. Toggle it ON in n8n.`);
-    }
+    if(!res.ok) throw new Error(`HTTP ${res.status} — Make sure workflow is ACTIVE in n8n (toggle top-right).`);
 
     let data;
-    try {
-      data = await res.json();
-    } catch {
-      throw new Error('Response was not valid JSON. Check your Respond to Webhook node output format.');
-    }
+    const text = await res.text();
+    try{ data = JSON.parse(text); }
+    catch{ throw new Error('Response is not valid JSON. Check your Respond to Webhook node format.'); }
 
     const cat = data.category || 'escalate';
     const reply = data.draft_reply || data.reply || '';
 
-    if (!reply) throw new Error('Agent returned empty reply. Check Parse Output node fields (draft_reply).');
+    if(!reply) throw new Error('Empty reply returned. Check your Parse Output node — draft_reply field should use: {{ JSON.parse($json.output.replace(/```json|```/g,"")).category }}');
 
-    success++;
-    totalMs += ms;
-    updateStats();
-    showResult(cat, reply, ms);
-    addHistory(from, subject, cat, ms);
+    suc++; ms+=elapsed; updateStats();
+    showResult(cat, reply, elapsed, from);
+    addHistory(from, subject, cat, elapsed);
 
-  } catch(e) {
-    errors++;
-    updateStats();
-
-    if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError') || e.message.includes('CORS') || e.message.includes('Load failed')) {
-      show('corsNote');
-      showError('CORS error — browser blocked the request. See the yellow box above for the fix.');
+  }catch(e){
+    err++; updateStats();
+    const msg = e.message||'';
+    if(msg.includes('Failed to fetch')||msg.includes('NetworkError')||msg.includes('Load failed')||msg.includes('CORS')){
+      show('corsBox');
+      showErr('CORS error — browser blocked the request. Follow the fix instructions in the yellow box above.');
     } else {
-      showError(e.message);
+      showErr(msg);
     }
-  } finally {
-    btn.disabled = false;
-    btn.classList.remove('loading');
+  } finally{
+    btn.disabled=false; btn.classList.remove('loading');
   }
 }
 
-function showResult(cat, reply, ms) {
-  const c = CAT[cat] || CAT['escalate'];
-  const chip = document.getElementById('catChip');
-  chip.className = `cat-chip ${c.cls}`;
-  chip.innerHTML = `${c.emoji} &nbsp;${c.label}`;
+function showResult(cat, rawReply, elapsed, from){
+  const c = CATS[cat] || CATS['escalate'];
 
-  document.getElementById('timeChip').textContent = `${ms}ms`;
+  const badge = el('catBadge');
+  badge.className = `cat-badge ${c.bc}`;
+  badge.innerHTML = `${c.e} &nbsp;${c.l}`;
 
-  // Clean HTML tags for display
-  const clean = reply.replace(/<[^>]*>/g, '').replace(/\n{3,}/g, '\n\n').trim();
-  document.getElementById('replyContent').textContent = clean;
+  el('timeChip').textContent = `${elapsed}ms`;
+  el('fromChip').textContent = from.split('@')[0];
 
-  show('resultArea');
+  // Render reply — handle HTML and plain text both properly
+  const frame = el('replyFrame');
+  const stripped = rawReply.replace(/<[^>]*>/g,'').replace(/\n{3,}/g,'\n\n').trim();
+
+  // If it has HTML structure, render it safely; else show as text
+  if(rawReply.includes('<p>') || rawReply.includes('<html>')){
+    // Use innerHTML but sanitize first — only allow safe tags
+    const safe = rawReply
+      .replace(/<script[^>]*>.*?<\/script>/gi,'')
+      .replace(/<style[^>]*>.*?<\/style>/gi,'')
+      .replace(/on\w+="[^"]*"/gi,'')
+      .replace(/<html[^>]*>|<\/html>|<body[^>]*>|<\/body>/gi,'')
+      .replace(/<br\s*\/?>/gi,'\n')
+      .replace(/<\/?p>/gi,'\n')
+      .replace(/<strong>(.*?)<\/strong>/gi,'**$1**')
+      .replace(/<[^>]*>/g,'')
+      .trim();
+    // Now display as formatted text
+    frame.textContent = safe;
+  } else {
+    frame.textContent = stripped;
+  }
+
+  show('resultCard');
 }
 
-function showError(msg) {
-  document.getElementById('errorMsg').textContent = msg;
-  show('errorBox');
-}
+function showErr(msg){ el('errMsg').textContent=msg; show('errBox'); }
 
-function addHistory(from, subject, cat, ms) {
-  const c = CAT[cat] || CAT['escalate'];
-  const t = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  runs.unshift({ from, subject, cat, ms, t });
-  if (runs.length > 10) runs.pop();
+function addHistory(from,subject,cat,elapsed){
+  const c=CATS[cat]||CATS['escalate'];
+  const t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  runs.unshift({from,subject,cat,elapsed,t});
+  if(runs.length>8) runs.pop();
 
-  const list = document.getElementById('historyList');
-  list.innerHTML = runs.map(r => {
-    const rc = CAT[r.cat] || CAT['escalate'];
-    return `<div class="history-row">
-      <div class="h-dot ${rc.dot}"></div>
-      <div class="h-from">${r.from.split('@')[0]}</div>
-      <div class="h-subject">${r.subject}</div>
-      <div class="h-cat ${rc.cls}">${rc.emoji} ${rc.label}</div>
-      <div class="h-time">${r.t}</div>
+  el('histList').innerHTML = runs.map(r=>{
+    const rc=CATS[r.cat]||CATS['escalate'];
+    return `<div class="hist-row">
+      <div class="hd ${rc.dc}"></div>
+      <div class="hfrom">${r.from.split('@')[0]}</div>
+      <div class="hsubj">${r.subject}</div>
+      <div class="hcat ${rc.bc}">${rc.e} ${rc.l}</div>
+      <div class="htime">${r.t}</div>
     </div>`;
   }).join('');
 
-  document.getElementById('histCount').textContent = `${runs.length} run${runs.length>1?'s':''}`;
-  show('historySection');
+  el('histCount').textContent = `${runs.length} run${runs.length>1?'s':''}`;
+  show('histSection');
 }
 
-function updateStats() {
-  document.getElementById('sTotal').textContent = total;
-  document.getElementById('sSuccess').textContent = success;
-  document.getElementById('sErrors').textContent = errors;
-  document.getElementById('sAvg').textContent = success > 0 ? Math.round(totalMs/success)+'ms' : '—';
+function updateStats(){
+  el('sT').textContent=tot;
+  el('sS').textContent=suc;
+  el('sE').textContent=err;
+  el('sA').textContent=suc>0?Math.round(ms/suc)+'ms':'—';
 }
 
-function copyReply() {
-  const t = document.getElementById('replyContent').textContent;
+function copyReply(){
+  const t=el('replyFrame').textContent;
   navigator.clipboard.writeText(t);
-  const b = event.target;
-  b.textContent = '✓ Copied!';
-  setTimeout(()=> b.textContent = '⎘ Copy Reply', 2000);
+  const b=event.target;
+  b.textContent='✓ Copied!';
+  setTimeout(()=>b.textContent='⎘ Copy Reply',2000);
 }
 
-function clearResult() {
-  hide('resultArea');
-  show('emptyState');
-}
+function clearAll(){ hide('resultCard'); show('emptyState'); }
 
-function show(id) { document.getElementById(id).classList.add('show'); document.getElementById(id).style.display = ''; }
-function hide(id) { document.getElementById(id).classList.remove('show'); }
+function show(id){ const e=el(id); e.style.display=''; e.classList.add('show'); }
+function hide(id){ const e=el(id); e.classList.remove('show'); if(['corsBox','errBox','resultCard','histSection'].includes(id)) e.style.display='none'; }
+
+// Init
+document.addEventListener('DOMContentLoaded',()=>{ show('emptyState'); });
 </script>
 </body>
 </html>
