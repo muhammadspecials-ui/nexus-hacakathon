@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus AI — Email Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg: #F8F9FC;
+  --surface: #FFFFFF;
+  --card: #FFFFFF;
+  --border: #E2E8F0;
+  --border2: #CBD5E1;
+  --accent: #1a1a2e;
+  --accent2: #4F46E5;
+  --green: #10B981;
+  --red: #EF4444;
+  --orange: #F59E0B;
+  --blue: #3B82F6;
+  --purple: #8B5CF6;
+  --text: #0F172A;
+  --sub: #64748B;
+  --muted: #94A3B8;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+}
+
+/* HEADER */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  width: 34px; height: 34px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.logo-name {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text);
+}
+
+.logo-name span { color: var(--accent2); }
+
+.header-right { display: flex; align-items: center; gap: 12px; }
+
+.pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.pill-live {
+  background: #ECFDF5;
+  color: var(--green);
+  border: 1px solid #A7F3D0;
+}
+
+.pill-model {
+  background: #EEF2FF;
+  color: var(--accent2);
+  border: 1px solid #C7D2FE;
+}
+
+.live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0%,100% { opacity:1; }
+  50% { opacity:0.3; }
+}
+
+/* LAYOUT */
+.layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  height: calc(100vh - 64px);
+}
+
+/* LEFT PANEL */
+.left {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.left-header {
+  padding: 28px 32px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-label {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.panel-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.panel-title span { color: var(--accent2); }
+
+.left-body { padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; }
+
+/* Scenarios */
+.scenario-label {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--sub);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.scenarios {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.sc-btn {
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sub);
+  transition: all 0.15s;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.sc-btn:hover {
+  border-color: var(--accent2);
+  color: var(--accent2);
+  background: #EEF2FF;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79,70,229,0.1);
+}
+
+.sc-btn .sc-emoji { font-size: 18px; }
+.sc-btn .sc-name { font-size: 10px; letter-spacing: 1px; }
+
+/* Fields */
+.field { display: flex; flex-direction: column; gap: 6px; }
+
+.field-label {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  color: var(--sub);
+  letter-spacing: 0.5px;
+}
+
+.field input, .field textarea {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  color: var(--text);
+  outline: none;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+.field input:focus, .field textarea:focus {
+  border-color: var(--accent2);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.08);
+}
+
+.field textarea {
+  resize: none;
+  min-height: 110px;
+  line-height: 1.7;
+}
+
+/* Run button */
+.run-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 15px 24px;
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  letter-spacing: -0.3px;
+  box-shadow: 0 4px 14px rgba(26,26,46,0.3);
+  width: 100%;
+}
+
+.run-btn:hover {
+  background: #2d2d4e;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(26,26,46,0.35);
+}
+
+.run-btn:active { transform: translateY(0); }
+.run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading .spinner { display: block; }
+.loading .btn-label { display: none; }
+
+/* RIGHT PANEL */
+.right {
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 32px 40px;
+  gap: 24px;
+}
+
+/* Stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+}
+
+.stat-val {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-key {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  font-weight: 500;
+}
+
+/* Result area */
+.result-area {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  display: none;
+  animation: fadeUp 0.3s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(10px); }
+  to { opacity:1; transform: translateY(0); }
+}
+
+.result-area.show { display: block; }
+
+.result-top {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FAFBFF;
+}
+
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 24px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1px;
+}
+
+.time-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+
+.result-body { padding: 24px; }
+
+.section-label {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  letter-spacing: 2px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.reply-content {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.9;
+  max-height: 300px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.action-btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--sub);
+  transition: all 0.15s;
+}
+
+.action-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+.action-btn.primary { background: var(--accent2); color: white; border-color: var(--accent2); }
+.action-btn.primary:hover { background: #4338CA; border-color: #4338CA; }
+
+/* Error */
+.error-box {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: none;
+  animation: fadeUp 0.2s ease;
+}
+
+.error-box.show { display: block; }
+.error-title { font-size: 13px; font-weight: 700; color: var(--red); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.error-body { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: #991B1B; line-height: 1.6; }
+
+/* CORS note */
+.cors-note {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: none;
+}
+
+.cors-note.show { display: flex; gap: 10px; align-items: flex-start; }
+.cors-note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.cors-note-text { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #92400E; line-height: 1.7; }
+.cors-note-text strong { color: #78350F; }
+
+/* History */
+.history-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: none;
+}
+
+.history-section.show { display: block; }
+
+.history-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.history-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-count {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+}
+
+.history-row {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.history-row:last-child { border-bottom: none; }
+.history-row:hover { background: var(--bg); }
+
+.h-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.h-from { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted); min-width: 130px; }
+.h-subject { flex: 1; font-size: 12px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.h-cat { font-size: 10px; font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 3px 10px; border-radius: 10px; white-space: nowrap; }
+.h-time { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--muted); }
+
+/* Empty */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.empty-icon { font-size: 48px; opacity: 0.15; }
+.empty-h { font-size: 16px; font-weight: 700; color: var(--text); opacity: 0.4; }
+.empty-p { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--muted); line-height: 1.7; }
+
+/* Category styles */
+.setup    { background:#EFF6FF; color:#1D4ED8; border:1.5px solid #BFDBFE; }
+.pricing  { background:#F0FDF4; color:#15803D; border:1.5px solid #BBF7D0; }
+.security { background:#FEF2F2; color:#DC2626; border:1.5px solid #FECACA; }
+.support  { background:#F5F3FF; color:#7C3AED; border:1.5px solid #DDD6FE; }
+.escalate { background:#FFF7ED; color:#C2410C; border:1.5px solid #FED7AA; }
+.off-topic{ background:#F8FAFC; color:#64748B; border:1.5px solid #E2E8F0; }
+
+.dot-setup    { background:#3B82F6; }
+.dot-pricing  { background:#10B981; }
+.dot-security { background:#EF4444; }
+.dot-support  { background:#8B5CF6; }
+.dot-escalate { background:#F59E0B; }
+.dot-offtopic { background:#94A3B8; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; height: auto; }
+  .left { border-right: none; border-bottom: 1px solid var(--border); }
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .right { padding: 20px; }
+  header { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">Nx</div>
+    <div class="logo-name">Nexus <span>AI</span></div>
+  </div>
+  <div class="header-right">
+    <div class="pill pill-model">⚡ Mistral + n8n</div>
+    <div class="pill pill-live">
+      <div class="live-dot"></div>
+      AGENT LIVE
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="left-header">
+      <div class="panel-label">Email Intelligence</div>
+      <div class="panel-title">Classify &amp; <span>Draft Reply</span></div>
+    </div>
+    <div class="left-body">
+
+      <!-- Quick scenarios -->
+      <div>
+        <div class="scenario-label">QUICK TEST SCENARIOS</div>
+        <div class="scenarios">
+          <button class="sc-btn" onclick="fill('setup')"><span class="sc-emoji">⚙️</span><span class="sc-name">SETUP</span></button>
+          <button class="sc-btn" onclick="fill('pricing')"><span class="sc-emoji">💰</span><span class="sc-name">PRICING</span></button>
+          <button class="sc-btn" onclick="fill('security')"><span class="sc-emoji">🔒</span><span class="sc-name">SECURITY</span></button>
+          <button class="sc-btn" onclick="fill('support')"><span class="sc-emoji">🛠</span><span class="sc-name">SUPPORT</span></button>
+          <button class="sc-btn" onclick="fill('offtopic')"><span class="sc-emoji">🚫</span><span class="sc-name">OFF-TOPIC</span></button>
+          <button class="sc-btn" onclick="fill('escalate')"><span class="sc-emoji">📞</span><span class="sc-name">ESCALATE</span></button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">FROM</div>
+        <input id="from" type="email" placeholder="sarah@company.com">
+      </div>
+
+      <div class="field">
+        <div class="field-label">SUBJECT</div>
+        <input id="subject" type="text" placeholder="Help connecting Salesforce">
+      </div>
+
+      <div class="field">
+        <div class="field-label">EMAIL BODY</div>
+        <textarea id="body" placeholder="Type or select a scenario above..."></textarea>
+      </div>
+
+      <button class="run-btn" id="runBtn" onclick="runAgent()">
+        <span class="btn-label">⚡ Run AI Agent</span>
+        <div class="spinner"></div>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-val" id="sTotal" style="color:var(--text)">0</div>
+        <div class="stat-key">TOTAL RUNS</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="sSuccess" style="color:var(--green)">0</div>
+        <div class="stat-key">SUCCESSFUL</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="sErrors" style="color:var(--red)">0</div>
+        <div class="stat-key">ERRORS</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="sAvg" style="color:var(--accent2)">—</div>
+        <div class="stat-key">AVG SPEED</div>
+      </div>
+    </div>
+
+    <!-- CORS note (shown when needed) -->
+    <div class="cors-note" id="corsNote">
+      <div class="cors-note-icon">⚠️</div>
+      <div class="cors-note-text">
+        <strong>CORS blocked by browser.</strong> This happens when calling n8n from a local HTML file.<br>
+        <strong>Fix:</strong> In n8n → Webhook node → Settings → enable <strong>"Allow Cross-Origin Requests"</strong> (or add <code>Access-Control-Allow-Origin: *</code> in Respond to Webhook headers). Then re-activate your workflow.
+      </div>
+    </div>
+
+    <!-- Error box -->
+    <div class="error-box" id="errorBox">
+      <div class="error-title">⚠ Error</div>
+      <div class="error-body" id="errorMsg"></div>
+    </div>
+
+    <!-- Result -->
+    <div class="result-area" id="resultArea">
+      <div class="result-top">
+        <div class="cat-chip" id="catChip"></div>
+        <div class="time-chip" id="timeChip"></div>
+      </div>
+      <div class="result-body">
+        <div class="section-label">DRAFTED REPLY</div>
+        <div class="reply-content" id="replyContent"></div>
+        <div class="action-row">
+          <button class="action-btn primary" onclick="copyReply()">⎘ Copy Reply</button>
+          <button class="action-btn" onclick="clearResult()">✕ Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="history-section" id="historySection">
+      <div class="history-header">
+        <div class="history-title">📋 Run History</div>
+        <div class="history-count" id="histCount">0 runs</div>
+      </div>
+      <div id="historyList"></div>
+    </div>
+
+    <!-- Empty -->
+    <div class="empty" id="emptyState">
+      <div class="empty-icon">📬</div>
+      <div class="empty-h">Ready to classify</div>
+      <div class="empty-p">Click a scenario above or type your own email.<br>Hit Run to see the AI agent in action.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const WEBHOOK = 'https://swans-ai-hackathon.app.n8n.cloud/webhook/nexus-email-agent';
+
+const SCENARIOS = {
+  setup: {
+    from: 'sarah.mitchell@brighthorizonltd.com',
+    subject: 'Help connecting Salesforce',
+    body: "Hi there, I just signed up for Nexus and I'm trying to connect our Salesforce account. I've gone through the settings menu but keep getting an authentication error. Could you walk me through the correct setup process step by step?"
+  },
+  pricing: {
+    from: 'david.chen@techcorp.io',
+    subject: 'Enterprise pricing for 200 users',
+    body: "We're evaluating Nexus for our company of around 200 users. We need SSO support and a custom SLA agreement. Could you share your enterprise pricing options and what's included at that tier?"
+  },
+  security: {
+    from: 'maria.santos@financefirm.com',
+    subject: 'GDPR compliance and data storage',
+    body: "We're an EU-based financial services firm and need to confirm your GDPR compliance before proceeding. Where is customer data stored? Are you SOC 2 Type II certified? We'll also need a Data Processing Agreement."
+  },
+  support: {
+    from: 'james.park@startup.co',
+    subject: 'API returning 401 on every call',
+    body: "Hi, I'm getting a 401 Unauthorized error on every single API call. I've double checked my API key multiple times and it looks correct. This started happening yesterday and is blocking our integration completely."
+  },
+  offtopic: {
+    from: 'random@gmail.com',
+    subject: "What's the weather in London?",
+    body: "Hey, could you tell me the weather forecast for London this weekend? Also any restaurant recommendations near Shoreditch would be great!"
+  },
+  escalate: {
+    from: 'cto@bigenterprise.com',
+    subject: 'Complex multi-system integration + compliance',
+    body: "We need to integrate Nexus simultaneously with Salesforce, HubSpot, and our custom internal ERP. We also have GDPR, SOC2, and ISO27001 requirements, need a custom SLA, a dedicated support engineer, and a full security audit before we can sign any contracts."
+  }
+};
+
+const CAT = {
+  setup:      { emoji:'⚙️', label:'SETUP',      cls:'setup',     dot:'dot-setup' },
+  pricing:    { emoji:'💰', label:'PRICING',    cls:'pricing',   dot:'dot-pricing' },
+  security:   { emoji:'🔒', label:'SECURITY',   cls:'security',  dot:'dot-security' },
+  support:    { emoji:'🛠', label:'SUPPORT',    cls:'support',   dot:'dot-support' },
+  escalate:   { emoji:'📞', label:'ESCALATE',   cls:'escalate',  dot:'dot-escalate' },
+  'off-topic':{ emoji:'🚫', label:'OFF-TOPIC',  cls:'off-topic', dot:'dot-offtopic' }
+};
+
+let runs = [], total=0, success=0, errors=0, totalMs=0;
+
+function fill(type) {
+  const s = SCENARIOS[type];
+  document.getElementById('from').value = s.from;
+  document.getElementById('subject').value = s.subject;
+  document.getElementById('body').value = s.body;
+  // Highlight the selected button
+  document.querySelectorAll('.sc-btn').forEach(b => b.style.borderColor = '');
+}
+
+async function runAgent() {
+  const from = document.getElementById('from').value.trim();
+  const subject = document.getElementById('subject').value.trim();
+  const body = document.getElementById('body').value.trim();
+
+  if (!from || !subject || !body) {
+    showError('Please fill in all fields or click a scenario above.');
+    return;
+  }
+
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  hide('errorBox'); hide('resultArea'); hide('emptyState'); hide('corsNote');
+
+  const t0 = Date.now();
+  total++;
+  updateStats();
+
+  try {
+    const res = await fetch(WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from, subject, body })
+    });
+
+    const ms = Date.now() - t0;
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} — Workflow may not be active. Toggle it ON in n8n.`);
+    }
+
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error('Response was not valid JSON. Check your Respond to Webhook node output format.');
+    }
+
+    const cat = data.category || 'escalate';
+    const reply = data.draft_reply || data.reply || '';
+
+    if (!reply) throw new Error('Agent returned empty reply. Check Parse Output node fields (draft_reply).');
+
+    success++;
+    totalMs += ms;
+    updateStats();
+    showResult(cat, reply, ms);
+    addHistory(from, subject, cat, ms);
+
+  } catch(e) {
+    errors++;
+    updateStats();
+
+    if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError') || e.message.includes('CORS') || e.message.includes('Load failed')) {
+      show('corsNote');
+      showError('CORS error — browser blocked the request. See the yellow box above for the fix.');
+    } else {
+      showError(e.message);
+    }
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+  }
+}
+
+function showResult(cat, reply, ms) {
+  const c = CAT[cat] || CAT['escalate'];
+  const chip = document.getElementById('catChip');
+  chip.className = `cat-chip ${c.cls}`;
+  chip.innerHTML = `${c.emoji} &nbsp;${c.label}`;
+
+  document.getElementById('timeChip').textContent = `${ms}ms`;
+
+  // Clean HTML tags for display
+  const clean = reply.replace(/<[^>]*>/g, '').replace(/\n{3,}/g, '\n\n').trim();
+  document.getElementById('replyContent').textContent = clean;
+
+  show('resultArea');
+}
+
+function showError(msg) {
+  document.getElementById('errorMsg').textContent = msg;
+  show('errorBox');
+}
+
+function addHistory(from, subject, cat, ms) {
+  const c = CAT[cat] || CAT['escalate'];
+  const t = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  runs.unshift({ from, subject, cat, ms, t });
+  if (runs.length > 10) runs.pop();
+
+  const list = document.getElementById('historyList');
+  list.innerHTML = runs.map(r => {
+    const rc = CAT[r.cat] || CAT['escalate'];
+    return `<div class="history-row">
+      <div class="h-dot ${rc.dot}"></div>
+      <div class="h-from">${r.from.split('@')[0]}</div>
+      <div class="h-subject">${r.subject}</div>
+      <div class="h-cat ${rc.cls}">${rc.emoji} ${rc.label}</div>
+      <div class="h-time">${r.t}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('histCount').textContent = `${runs.length} run${runs.length>1?'s':''}`;
+  show('historySection');
+}
+
+function updateStats() {
+  document.getElementById('sTotal').textContent = total;
+  document.getElementById('sSuccess').textContent = success;
+  document.getElementById('sErrors').textContent = errors;
+  document.getElementById('sAvg').textContent = success > 0 ? Math.round(totalMs/success)+'ms' : '—';
+}
+
+function copyReply() {
+  const t = document.getElementById('replyContent').textContent;
+  navigator.clipboard.writeText(t);
+  const b = event.target;
+  b.textContent = '✓ Copied!';
+  setTimeout(()=> b.textContent = '⎘ Copy Reply', 2000);
+}
+
+function clearResult() {
+  hide('resultArea');
+  show('emptyState');
+}
+
+function show(id) { document.getElementById(id).classList.add('show'); document.getElementById(id).style.display = ''; }
+function hide(id) { document.getElementById(id).classList.remove('show'); }
+</script>
+</body>
+</html>
